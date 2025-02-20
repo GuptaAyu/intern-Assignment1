@@ -1,0 +1,53 @@
+import os
+from google.colab import drive
+
+drive.mount('/content/drive')
+
+def evaluate_expression(expression):
+   
+    try:
+        expression = expression.replace("^", "**") 
+        result = eval(expression)  # Evaluate the expression
+        return result
+    except Exception as e:
+        return f"Error: {e}"
+
+def process_file(input_filename, output_filename):
+   
+    if not os.path.exists(input_filename):
+        print(f"Error: Input file '{input_filename}' not found!")
+        return
+
+    with open(input_filename, 'r') as infile:
+        lines = infile.readlines()
+
+    results = []
+    for line in lines:
+        expression = line.strip()
+        if expression.endswith('='):
+            expression = expression[:-1].strip()  # Remove '=' at the end
+            result = evaluate_expression(expression)
+            results.append(f"{expression} = {result}")
+        else:
+            results.append(f"{expression} = Invalid Expression")
+
+    with open(output_filename, 'w') as outfile:
+        for result in results:
+            outfile.write(result + '\n')
+
+    print(f"Processing complete! Check '{output_filename}' for results.")
+
+
+drive_path = "/content/drive/MyDrive/Colab Notebooks"
+
+input_filename = os.path.join(drive_path, "input.txt")
+output_filename = os.path.join(drive_path, "output.txt")
+
+if not os.path.exists(input_filename):
+    with open(input_filename, 'w') as f:
+        f.write("10 - 2 =\n")
+        f.write("100 * ( 2 + 12 ) =\n")
+        f.write("(10 + 5^2) * ( (5*-2) + 9 - 3^3) / 2=\n")
+    print(f"Created sample input file: {input_filename}")
+
+process_file(input_filename, output_filename)
