@@ -1,0 +1,47 @@
+import smtplib
+import os
+from email.message import EmailMessage
+
+def send_email(sender_email, sender_password, receiver_email, subject, body, image_path):
+   
+    if not os.path.isfile(image_path):
+        print("Error: The specified file does not exist.")
+        return
+
+    allowed_extensions = {".png", ".jpg", ".jpeg"}
+    file_extension = os.path.splitext(image_path)[1].lower()
+
+    if file_extension not in allowed_extensions:
+        print("Error: Only PNG, JPG, and JPEG files are allowed.")
+        return
+
+    
+    msg = EmailMessage()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+    msg.set_content(body)
+
+    
+    with open(image_path, 'rb') as img:
+        img_data = img.read()
+        msg.add_attachment(img_data, maintype='image', subtype=file_extension[1:], filename=os.path.basename(image_path))
+
+    
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(sender_email, sender_password)
+            server.send_message(msg)
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+sender_email = "ayugupta958@gmail.com"
+sender_password = "xliq emcr jyxw hlfl"
+receiver_email = "hr@ignitershub.com"
+subject = "Challenge 3 Completed"
+body = "Name: Ayush kumar\nSemester: 8th\nBranch: CSE\nRoll Number: 210180101009"
+image_path = r"/content/image.jpeg.jpeg"  
+
+send_email(sender_email, sender_password, receiver_email, subject, body, image_path)

@@ -1,0 +1,39 @@
+from fuzzywuzzy import process
+
+def load_words():
+    
+    word_list = [
+        "absolutely", "active", "activist", "activity", "actor", "actual", "accurate",
+        "example", "sample", "test", "default", "list", "words", "abstraction", "action",
+        "activeness", "activation", "activate", "actuality", "actionable"
+    ]
+    return word_list
+
+def get_top_matches(query, word_list, top_k=3):
+    
+    if not word_list:
+        return ["No suggestions available (word list is empty)"]
+
+    matches = process.extract(query, word_list, limit=top_k)
+    return [match[0] for match in matches]
+
+def interactive_search(word_list):
+    
+    print("Type a word to find similar suggestions (or type 'exit' to quit):")
+
+    while True:
+        user_input = input("Input >> ").strip()  
+
+        if user_input.lower() == 'exit': 
+            print("Exiting program...")
+            break
+
+        suggestions = get_top_matches(user_input, word_list)
+        print("Output >>", ", ".join(suggestions)) 
+
+def main():
+    word_list = load_words() 
+    interactive_search(word_list)  
+
+if __name__ == "__main__":
+    main()
